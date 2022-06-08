@@ -1,0 +1,22 @@
+[
+  {
+    "title":"Recipes",
+    "href":"recipes"
+  },
+  {
+    "title":"Breakfast",
+    "href":"breakfast"
+  },
+  {
+    "title":"Lunch",
+    "href":"lunch"
+  },
+  {
+    "title":"Dinner",
+    "href":"dinner"
+  },
+  {
+    "title":"Blog",
+    "href":"blog"
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "name": "Obsidian Mastery",
+  "logo": "logo.png",
+  "content":{
+    "movie":false,
+    "blog":true
+  }
+}

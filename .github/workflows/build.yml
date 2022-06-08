@@ -1,0 +1,50 @@
+name: Build
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Check out repository uuistudio/template-blog
+        uses: actions/checkout@v3
+        with:
+          repository: uuistudio/template-blog
+          token: ${{ secrets.DYLAN_REPO_TOKEN }}
+          path: "template"
+      - name: Process template
+        run: |
+          rm -rf ${{ github.workspace }}/template/data
+          rm -rf ${{ github.workspace }}/template/public
+          cp -r data ${{ github.workspace }}/template
+          cp -r data/public ${{ github.workspace }}/template
+      # - name: Check out repository ObsidianMastery/vault
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: ObsidianMastery/vault
+      #     token: ${{ secrets.DYLAN_REPO_TOKEN }}
+      #     path: "vault"
+      # - name: Process vault
+      #   run: |
+      #     cp -r vault/Notes/* ${{ github.workspace }}/template/data/blog
+      - name: Build
+        run: |
+          cd ${{ github.workspace }}/template
+          npm i
+          npm run build
+      - name: Cleanup
+        run: |
+          rm -rf ${{ github.workspace }}/public
+          mv ${{ github.workspace }}/template/dist ${{ github.workspace }}/public
+          rm -rf ${{ github.workspace }}/template
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: Commit and push if it changed
+        run: |-
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"        
+          git add -A
+          timestamp=$(date -u)
+          git commit -m "Latest data: ${timestamp}" || exit 0
+          git push
