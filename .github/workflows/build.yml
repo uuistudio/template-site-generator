@@ -22,6 +22,7 @@ jobs:
           path: source          
       - name: Update Data
         run: |
+          tree        
           ${{ github.workspace }}/template/scripts/update-data.sh ${{ github.workspace }}/source ${{ github.workspace }}/template
           tree
       - name: Build
