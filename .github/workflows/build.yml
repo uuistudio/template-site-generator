@@ -8,27 +8,22 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Check out repository uuistudio/template-blog
-        uses: actions/checkout@v3
+      - name: Check out repository ${{ secrets.TEMPLATE_REPO }} 
+        uses: actions/checkout@v3   
         with:
-          repository: uuistudio/template-blog
-          token: ${{ secrets.DYLAN_REPO_TOKEN }}
-          path: "template"
-      - name: Process template
+          repository: ${{ secrets.TEMPLATE_REPO }} 
+          token: ${{ secrets.DYLAN_REPO_TOKEN }} 
+          path: template
+      - name: Check out repository ${{ secrets.SOURCE_REPO }} 
+        uses: actions/checkout@v3   
+        with:
+          repository: ${{ secrets.SOURCE_REPO }} 
+          token: ${{ secrets.DYLAN_REPO_TOKEN }} 
+          path: source          
+      - name: Update Data
         run: |
-          rm -rf ${{ github.workspace }}/template/data
-          rm -rf ${{ github.workspace }}/template/public
-          cp -r data ${{ github.workspace }}/template
-          cp -r data/public ${{ github.workspace }}/template
-      # - name: Check out repository ObsidianMastery/vault
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: ObsidianMastery/vault
-      #     token: ${{ secrets.DYLAN_REPO_TOKEN }}
-      #     path: "vault"
-      # - name: Process vault
-      #   run: |
-      #     cp -r vault/Notes/* ${{ github.workspace }}/template/data/blog
+          ./scripts/update-data.sh ${{ github.workspace }}/source ${{ github.workspace }}/template
+          tree
       - name: Build
         run: |
           cd ${{ github.workspace }}/template
@@ -39,6 +34,7 @@ jobs:
           rm -rf ${{ github.workspace }}/public
           mv ${{ github.workspace }}/template/dist ${{ github.workspace }}/public
           rm -rf ${{ github.workspace }}/template
+          rm -rf ${{ github.workspace }}/source
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Commit and push if it changed
         run: |-
@@ -47,4 +43,4 @@ jobs:
           git add -A
           timestamp=$(date -u)
           git commit -m "Latest data: ${timestamp}" || exit 0
-          git push
+          git push    
